@@ -22,6 +22,7 @@ numberofthumbsup = 0
 bot = commands.Bot(command_prefix='!', intents=intents)
 role_id = 1249201320884305983
 stuff = 0
+script_directory = os.path.dirname(os.path.abspath(__file__))
 pattern = re.compile(r'http\S+|www\S+')
 
 
@@ -64,12 +65,12 @@ async def on_message(message):
         if trigger_message == "glstar":
             messageID = message
             #print(messageID)
-            ping_message = await message.channel.send('\n👍: BE READY FOR THE FIRST ROUND\n\n👎: YOU ARENT GOING\n\n⛺: MEANS TENTATIVE.. UNCERTAIN; SUBJECT TO FUTURE CHANGE. IF YOU CANT MAKE IT AT FIRST ROUND PICK THIS\n\n<:Flex:1199972735401607208>: MEANS YOU CAN MAKE IT TO THE FIRST ROUND BUT ARE THERE TO FILL\nhttps://cdn.discordapp.com/attachments/828479988948533299/1236084210519773336/caption.gif?ex=667b46a1&is=6679f521&hm=b1dfa876dfc3f642e1e4da329b31b343b9cf0352a48dfadfa3a7b8bc34d87b0c&\nGuild League' + display_message)
+            ping_message = await message.channel.send('\n👍: BE READY FOR THE FIRST ROUND\n\n👎: YOU ARENT GOING\n\n🕑 : Gonna be late\n\n💪: You want to chill and be called when we need more\n\n https://tenor.com/view/cat-kitty-kitten-zoom-persuit-gif-17646381782073725526\nGuild League ' + display_message)
             await ping_message.pin()
             await ping_message.add_reaction('👍')
             await ping_message.add_reaction('👎')
-            await ping_message.add_reaction('⛺')
-            await ping_message.add_reaction('<:Flex:1199972735401607208>')
+            await ping_message.add_reaction('🕑')
+            await ping_message.add_reaction('💪') 
         if trigger_message == "reload":
             print(ping_message)
         if trigger_message == "delete":
@@ -85,16 +86,20 @@ async def on_message(message):
                 if msg.author.name == "Angry_Bot":
                     await msg.delete()
         if trigger_message == "status":
-            numberofthumbsup = len(user_array) - 1
+            temp_array = user_array
+            for s in temp_array:
+                if s == "Angry_Bot":
+                    temp_array.remove("Angry_Bot")
+            numberofthumbsup = len(temp_array)
             ping_message = await message.channel.send(str(numberofthumbsup) + "/10")
+            for index, firstten in enumerate(temp_array,start=1):
+                ping_message = await message.channel.send(f"{index}: {firstten}")
         if trigger_message == "update":
             channels = guild.channels
             workbook = xlsxwriter.Workbook(display_message+'.xlsx')
             worksheet = workbook.add_worksheet()
             display_message = new_message[7:]
-            print(display_message)
             for channel in channels:
-                print(channel.name)
                 if(channel.name != "NetSlum"):
                     if(channel.name != "BDO Stuff"):
                         if(channel.name != "NSFW"):
@@ -104,16 +109,22 @@ async def on_message(message):
                                         if(channel.name != "Welcome"):
                                             if(channel.name != "General"):
                                                 if(channel.name != "class-help"):
-                                                    i = 1
-                                                    async for msg in channel.history(): 
-                                                        if channel.name == str(display_message): 
-                                                           stuff = 'A'+ str(i) 
-                                                           stuff2 = 'B' + str(i)
-                                                           stuff3 = 'C' + str(i)
-                                                           worksheet.write(stuff, str(msg.id)) 
-                                                           worksheet.write(stuff2, str(channel.name))
-                                                           worksheet.write(stuff3, str(re.sub(pattern,'',msg.content)))
-                                                           i = i + 1   
+                                                    if(channel.name != "Admin"): 
+                                                        if(channel.name != "BDO Voice Channels"):
+                                                            if(channel.name != "NetSlum BDO"):
+                                                                if(channel.name != "other-games"):
+                                                                    if(channel.name != "Leadership"):
+                                                                        i = 1
+                                                                        print(channel.name)
+                                                                        async for msg in channel.history(): 
+                                                                            if channel.name == str(display_message): 
+                                                                                stuff = 'A'+ str(i) 
+                                                                                stuff2 = 'B' + str(i)
+                                                                                stuff3 = 'C' + str(i)
+                                                                                worksheet.write(stuff, str(msg.id)) 
+                                                                                worksheet.write(stuff2, str(channel.name))
+                                                                                worksheet.write(stuff3, str(re.sub(pattern,'',msg.content)))
+                                                                                i = i + 1   
             workbook.close()         
             ping_message = await message.channel.send('Done :3')                             
         if trigger_message == "lookup":
@@ -122,9 +133,9 @@ async def on_message(message):
             #threads = await channels.threads()
             #ping_message = await message.channel.fetch_message(msg_id)
             #await message.channel.send("stuff" + message)
-            files = [f for f in os.listdir('C:\\Users\\vwalk\\Discord_bot') if f.endswith('.xlsx')]
+            files = [f for f in os.listdir(script_directory) if f.endswith('.xlsx')]
             for file in files:
-                file_path = os.path.join('C:\\Users\\vwalk\\Discord_bot', file)
+                file_path = os.path.join(script_directory, file)
                 df = openpyxl.load_workbook(file_path)
                 sh = df.active
                 max_rows = sh.max_row
@@ -145,10 +156,16 @@ async def on_message(message):
                                         if(channel.name != "Welcome"):
                                             if(channel.name != "General"):
                                                 if(channel.name != "class-help"):
-                                                    async for msg in channel.history():
-                                                        if str(msg.id) == str(dm):  
-                                                            await message.channel.send(msg.jump_url)
-                                                            return
+                                                    if(channel.name != "archive"): 
+                                                        if(channel.name != "Admin"): 
+                                                            if(channel.name != "BDO Voice Channels"):
+                                                                if(channel.name != "NetSlum BDO"):
+                                                                    if(channel.name != "other-games"):
+                                                                        if(channel.name != "Leadership"):  
+                                                                            async for msg in channel.history():
+                                                                                if str(msg.id) == str(dm):  
+                                                                                    await message.channel.send(msg.jump_url)
+                                                                                    return
             ping_message = await message.channel.send('Nope cant find ' + display_message + '\nIf you need help go here -> https://discord.com/channels/808051243183767582/1215463505017176124/1266138009175199787')
 @bot.event 
 async def on_reaction_add(reaction,user):
@@ -156,6 +173,7 @@ async def on_reaction_add(reaction,user):
     global numberofthumbsup
     global stuff
     global flag
+    print(user.name)
     if reaction.message.author == bot.user:
         if reaction.emoji == '👍':
             if user.name in user_array: 
@@ -185,24 +203,27 @@ async def on_raw_reaction_remove(reaction):
     global numberofthumbsup
     global flag
     numberofthumbsup = len(user_array) - 1
-    print(numberofthumbsup)
-    if numberofthumbsup > 0:
-        if str(user) in user_array:
-            user_array.remove(str(user))
-            print(len(user_array))
-            if len(user_array) <= 1:
-                await ping_message.add_reaction(reaction.emoji)
-            print(user_array)
-            numberofthumbsup = len(user_array) - 1
-            f = open("usertextfile.txt","w+")
-            for i in user_array:
-                f.write("\n" + i)
-            f.close
-            with open('usertextfile.txt', 'r') as f:
-                lines = list(filter(lambda x: x.strip() != '', f.readlines()))
-            with open('usertextfile.txt', 'w') as f:
-                f.writelines(lines)
-            f.close
+    # Ignore bot's own reactions
+    print(reaction.emoji)
+    if str(reaction.emoji) == '👍':
+        print("nice thumbs up")
+        if numberofthumbsup > 0:
+            if str(user) in user_array:
+                user_array.remove(str(user))
+                print(len(user_array))
+                if len(user_array) <= 1:
+                    await ping_message.add_reaction(reaction.emoji)
+                print(user_array)
+                numberofthumbsup = len(user_array) - 1
+                f = open("usertextfile.txt","w+")
+                for i in user_array:
+                    f.write("\n" + i)
+                f.close
+                with open('usertextfile.txt', 'r') as f:
+                    lines = list(filter(lambda x: x.strip() != '', f.readlines()))
+                with open('usertextfile.txt', 'w') as f:
+                    f.writelines(lines)
+                f.close
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 
